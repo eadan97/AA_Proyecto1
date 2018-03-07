@@ -42,9 +42,15 @@ namespace AA_Proyecto1_v1
              */
         }
 
-        public void crossover()
+        public void crossover(int porcentaje)
         {
-
+            int iteraciones = totalPopulation * (porcentaje/100);
+            for (int i = 0; i < iteraciones; i++)
+            {
+                Chromosome tempChromosome = new Chromosome(population[2*i], population[2*i+1]);
+                population[population.Count - i] = tempChromosome;
+            }
+            
         }
 
         public void initializePopulation()
