@@ -12,13 +12,14 @@ namespace AA_Proyecto1_v1
 {
     public class GenAlg
     {
-        public List<Chromosome> population;
+        public Chromosome[] population;
         private Chromosome fitest;
         private int totalPopulation;
+        static Random random = new Random();
         public GenAlg(int totalPopulation, Bitmap image)
         {
             this.totalPopulation = totalPopulation;
-            this.population = new List<Chromosome>();
+            this.population = new Chromosome[totalPopulation];
             this.fitest = new Chromosome(image);
             fitest.calculateColorHistogram();
         }
@@ -42,13 +43,13 @@ namespace AA_Proyecto1_v1
              */
         }
 
-        public void crossover(int porcentaje)
+        public void crossover(int numeroCruces, int porcentajeGenesMutar)
         {
-            int iteraciones = totalPopulation * (porcentaje/100);
-            for (int i = 0; i < iteraciones; i++)
+            
+            for (int i = 0; i < numeroCruces; i++)
             {
-                Chromosome tempChromosome = new Chromosome(population[2*i], population[2*i+1]);
-                population[population.Count - i] = tempChromosome;
+                Chromosome tempChromosome = new Chromosome(population[2*i], population[2*i+1], porcentajeGenesMutar);
+                population[totalPopulation- (i+1)] = tempChromosome;
             }
             
         }
@@ -60,18 +61,16 @@ namespace AA_Proyecto1_v1
             for (int i = 0; i < totalPopulation; i++)
             {
                 Bitmap temp = new Bitmap(width,height);
-                Random random = new Random();
+                
                 for (int j = 0; j < height; j++)
                 {
                     for (int k = 0; k < width; k++)
                     {
-                        int r = random.Next(256);
-                        int g = random.Next(256);
-                        int b = random.Next(256);
-                        temp.SetPixel(k,j, Color.FromArgb(r,g,b));
+                        
+                        temp.SetPixel(k,j, GenerateRandomColor());
                     }
                 }
-                population.Add(new Chromosome(temp));
+                population[i]=(new Chromosome(temp));
             }
         }
 
@@ -83,9 +82,18 @@ namespace AA_Proyecto1_v1
                 chromosome.calculateColorHistogram();
                 chromosome.calculateManhattanDistance(fitest.colorHistogram);
             }
-            population=population.OrderBy(o => o.manhattanDistance).ToList();
+            population= population.OrderBy(o => o.manhattanDistance).ToArray();
 
 
         }
+
+        public static Color GenerateRandomColor()
+        {
+            int r = random.Next(256);
+            int g = random.Next(256);
+            int b = random.Next(256);
+            return Color.FromArgb(r, g, b);
+        }
     }
+
 }
